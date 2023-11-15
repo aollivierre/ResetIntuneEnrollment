@@ -10,7 +10,7 @@ This guide provides step-by-step instructions for managing Microsoft 365 (M365) 
 ## Workstation/Client Side
 
 ### Step 2: Adjust User Account Control (UAC) Settings
-- **Action**: Set the User Account Control (UAC) slider to the highest level for ensure the RunAs window runs in secure desktop as opposed to regular user desktop. Otherwise Task Scheduler and Regedit will run under the standard user context if UAC elevation is turned off.
+- **Action**: Set the User Account Control (UAC) slider to the highest level to ensure the RunAs window runs in secure desktop as opposed to regular user desktop. Otherwise Task Scheduler and Regedit will run under the standard user context if UAC elevation is turned off.
 
 ### Step 3: Create a Code Folder
 - **Action**: Create a folder named `code` at the root of the C: drive.
