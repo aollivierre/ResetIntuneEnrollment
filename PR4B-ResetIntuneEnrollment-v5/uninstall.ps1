@@ -85,7 +85,6 @@ Ensure the Write-EnhancedLog function is defined before using this function for 
 #>
 
 $privateFolderPath = Join-Path -Path $PSScriptRoot -ChildPath "private"
-$scriptFiles = Get-ChildItem -Path $privateFolderPath -Filter "*.ps1"
 
 try {
     $scriptFiles = Get-ChildItem -Path $privateFolderPath -Filter "*.ps1"

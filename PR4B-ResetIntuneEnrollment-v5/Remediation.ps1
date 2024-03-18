@@ -24,7 +24,6 @@ $privateFolderPath = Join-Path -Path $PSScriptRoot -ChildPath "private"
 $scriptFiles = Get-ChildItem -Path $privateFolderPath -Filter "*.ps1"
 
 try {
-    $scriptFiles = Get-ChildItem -Path $privateFolderPath -Filter "*.ps1"
     foreach ($file in $scriptFiles) {
         $filePath = $file.FullName
         

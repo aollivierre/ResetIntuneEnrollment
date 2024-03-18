@@ -484,19 +484,18 @@ else {
 
 <#
 .SYNOPSIS
-Copies all files in the same directory as the script to the specified destination path.
+Copies all files and folders in the same directory as the script to the specified destination path.
 
 .DESCRIPTION
-This function copies all files located in the same directory as the script to the specified destination path. It can be used to bundle necessary files with the script for distribution or deployment.
+This function copies all files and folders located in the same directory as the script to the specified destination path. It can be used to bundle necessary files and folders with the script for distribution or deployment.
 
 .PARAMETER DestinationPath
-The destination path where the files will be copied.
+The destination path where the files and folders will be copied.
 
 .EXAMPLE
 Copy-FilesToPath -DestinationPath "C:\Temp"
 
-This example copies all files in the same directory as the script to the "C:\Temp" directory.
-
+This example copies all files and folders in the same directory as the script to the "C:\Temp" directory.
 #>
 function Copy-FilesToPath {
     [CmdletBinding()]
@@ -505,31 +504,102 @@ function Copy-FilesToPath {
         [string]$DestinationPath
     )
 
-    try {
-        Write-EnhancedLog -Message "Copying files to destination path: $DestinationPath" -Level "INFO" -ForegroundColor ([System.ConsoleColor]::Cyan)
-        
-        # Get all files in the script directory
-        $Files = Get-ChildItem -Path $PSScriptRoot -File
-
-        # Copy each file to the destination path
-        foreach ($File in $Files) {
-            Copy-Item -Path $File.FullName -Destination $DestinationPath -Force
+    begin {
+        Write-EnhancedLog -Message "Starting the copy process to $DestinationPath" -Level "INFO" -ForegroundColor ([System.ConsoleColor]::Cyan)
+        # Ensure the destination directory exists
+        if (-not (Test-Path -Path $DestinationPath)) {
+            New-Item -Path $DestinationPath -ItemType Directory | Out-Null
         }
-
-        Write-EnhancedLog -Message "Files copied successfully." -Level "INFO" -ForegroundColor ([System.ConsoleColor]::Green)
     }
-    catch {
-        Write-EnhancedLog -Message "Error occurred while copying files: $_" -Level "ERROR" -ForegroundColor ([System.ConsoleColor]::Red)
-        throw $_
+
+    process {
+        try {
+            # Get the path of the script directory
+            # $ScriptDirectory = Split-Path -Path $script:MyInvocation.MyCommand.Definition
+
+            # Copy all items from the script's directory to the destination, including subdirectories
+            Copy-Item -Path "$PSScriptRoot\*" -Destination $DestinationPath -Recurse -Force -ErrorAction Stop
+
+            Write-EnhancedLog -Message "All items copied successfully to $DestinationPath." -Level "INFO" -ForegroundColor ([System.ConsoleColor]::Green)
+        }
+        catch {
+            Write-EnhancedLog -Message "Error occurred during the copy process: $_" -Level "ERROR" -ForegroundColor ([System.ConsoleColor]::Red)
+            throw $_
+        }
+    }
+
+    end {
+        Write-EnhancedLog -Message "Copy process completed." -Level "INFO" -ForegroundColor ([System.ConsoleColor]::Cyan)
     }
 }
+
 Copy-FilesToPath -DestinationPath $global:Path_PR
 
 
 
+function Verify-CopyOperation {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]$DestinationPath
+    )
 
+    begin {
+        Write-EnhancedLog -Message "Verifying copy operation..." -Level "INFO" -ForegroundColor ([System.ConsoleColor]::Cyan)
+        $sourceItems = Get-ChildItem -Path $PSScriptRoot -Recurse
+        $destinationItems = Get-ChildItem -Path $DestinationPath -Recurse
 
+        # Use a generic list for better performance compared to using an array with +=
+        $verificationResults = New-Object System.Collections.Generic.List[Object]
+    }
 
+    process {
+        try {
+            foreach ($item in $sourceItems) {
+                $relativePath = $item.FullName.Substring($PSScriptRoot.Length)
+                $correspondingPath = Join-Path -Path $DestinationPath -ChildPath $relativePath
+
+                if (-not (Test-Path -Path $correspondingPath)) {
+                    $verificationResults.Add([PSCustomObject]@{
+                        Status       = "Missing"
+                        SourcePath   = $item.FullName
+                        ExpectedPath = $correspondingPath
+                    })
+                }
+            }
+
+            foreach ($item in $destinationItems) {
+                $relativePath = $item.FullName.Substring($DestinationPath.Length)
+                $correspondingPath = Join-Path -Path $PSScriptRoot -ChildPath $relativePath
+
+                if (-not (Test-Path -Path $correspondingPath)) {
+                    $verificationResults.Add([PSCustomObject]@{
+                        Status       = "Extra"
+                        SourcePath   = $correspondingPath
+                        ActualPath   = $item.FullName
+                    })
+                }
+            }
+        }
+        catch {
+            Write-EnhancedLog -Message "Error during verification process: $_" -Level "ERROR" -ForegroundColor ([System.ConsoleColor]::Red)
+        }
+    }
+
+    end {
+        if ($verificationResults.Count -gt 0) {
+            Write-EnhancedLog -Message "Discrepancies found. See detailed log." -Level "WARNING" -ForegroundColor ([System.ConsoleColor]::Yellow)
+            $verificationResults | Format-Table -AutoSize | Out-String | ForEach-Object { Write-EnhancedLog -Message $_ -Level "INFO" }
+        } else {
+            Write-EnhancedLog -Message "All items verified successfully. No discrepancies found." -Level "INFO" -ForegroundColor ([System.ConsoleColor]::Green)
+        }
+
+        Write-EnhancedLog -Message ("Total items in source: " + $sourceItems.Count) -Level "INFO" -ForegroundColor ([System.ConsoleColor]::Cyan)
+        Write-EnhancedLog -Message ("Total items in destination: " + $destinationItems.Count) -Level "INFO" -ForegroundColor ([System.ConsoleColor]::Cyan)
+    }
+}
+# Assuming $global:Path_PR is set to your destination path and Write-EnhancedLog is defined
+Verify-CopyOperation -DestinationPath $global:Path_PR
 
 
 
