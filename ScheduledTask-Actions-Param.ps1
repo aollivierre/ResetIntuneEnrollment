@@ -13,4 +13,7 @@ C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
 
 
 #v2.0
+
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+
 -ExecutionPolicy Bypass -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/aollivierre/ResetIntuneEnrollment/main/AutoEnroll-MDM7_LITE.ps1' -UseBasicParsing | Invoke-Expression"
