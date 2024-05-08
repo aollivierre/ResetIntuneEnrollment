@@ -1,10 +1,10 @@
 # Define the log file name based on the hostname
 $hostname = hostname
 $logFileName = "$hostname.txt"
-$logFileFullPath = Join-Path -Path $PSScriptRoot -ChildPath $logFileName
+# $logFileFullPath = Join-Path -Path $PSScriptRoot -ChildPath $logFileName
 
 # Start transcript and overwrite if the log file already exists
-Start-Transcript -Path $logFileFullPath -Force
+Start-Transcript -Path c:\temp\$logFileName -Force
 
 # Your original commands
 New-Item "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CurrentVersion\MDM" -Force
@@ -14,5 +14,4 @@ New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CurrentVersion
 # Optionally, you can log additional information here
 Write-Host "Hostname: $hostname"
 
-# Stop transcript
-Stop-Transcript
+Stop transcript
