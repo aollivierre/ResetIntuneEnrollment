@@ -14,4 +14,4 @@ New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CurrentVersion
 # Optionally, you can log additional information here
 Write-Host "Hostname: $hostname"
 
-Stop transcript
+Stop-transcript
