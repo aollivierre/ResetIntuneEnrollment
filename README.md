@@ -16,16 +16,16 @@ This guide provides step-by-step instructions for managing Microsoft 365 (M365) 
 - **Action**: Create a folder named `code` at the root of the C: drive.
 
 ### Step 4: Copy PowerShell Script
-- **Action**: Copy the PowerShell script from https://github.com/aollivierre/ResetIntuneEnrollment/blob/main/Reset-IntuneEnrollment_v12_InterActive_CleanupOnly.ps1 to `C:\code`.
+- **Action**: Download the entire GitHub content using Code > Download Zip or use Git Clone to `C:\code`.
 
 ### Step 5: Launch PowerShell as Administrator
-- **Action**: Open PowerShell with administrative privileges.
+- **Action**: Open PowerShell with administrative privileges. (Right click and Run As Admin)
 
 ### Step 6: Navigate to Script Folder
-- **Action**: Run `cd C:\code` in PowerShell to change the directory to the script's location.
+- **Action**: Run `cd C:\code\PR4B-ResetIntuneEnrollment-v5` in PowerShell to change the directory to the script's location.
 
 ### Step 7: Execute the Script
-- **Action**: Call the script using `.\Reset-IntuneEnrollment_v12_InterActive_CleanupOnly.ps1`.
+- **Action**: Call the script using `.\install.ps1`.
 
 ### Step 8: Share Output and Log Files
 - **Action**: Once the script completes, share the output and log files located at `C:\Code\_MEM\logs\ResetIntuneMDMEnrollment`.
@@ -34,7 +34,7 @@ This guide provides step-by-step instructions for managing Microsoft 365 (M365) 
 - **Action**: Launch Task Scheduler (`taskschd.msc`) as an administrator.
 
 ### Step 10: Run MDM Enrollment Task
-- **Action**: Locate and manually run the task named `MDMEnrollmentScripted` under the main library.
+- **Action**: Locate and manually run the task named `PR4B-ResetIntuneEnrollment-[GUID]` under the main library.
 
 ### Step 11: Install Company Portal
 - **Action**: Download and install the Company Portal from the Microsoft Store.
